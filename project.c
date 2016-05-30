@@ -22,6 +22,7 @@
 
 int main () {
 	char c;
+	printf("최강플젝 강승호 \n");
 
 	while((c=getchar())!=13) //end of line
 	{
