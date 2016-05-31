@@ -23,6 +23,7 @@
 int main () {
 	char c;
 	printf("최강플젝 강승호 \n");
+	printf("민석, 한다, 커밋 \n");
 
 	while((c=getchar())!=13) //end of line
 	{
