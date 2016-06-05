@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
+
 //	int add_function ()
 //	int minus_function ()
 //	int multi_function ()
@@ -19,7 +20,6 @@
 //  int _end()
 //  int _var()
 //  int _error()
-
 
 
 int main () {
@@ -177,4 +177,5 @@ int add_function () {
 			num3[i+1]+=1;
 		}
 	}
+	return 0;
 }
