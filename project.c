@@ -83,7 +83,8 @@ int main () {
 		else //c==' '
 		{
 			printf("%d\n",count);
-			cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+			if(space_flag==0)
+				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 			space_flag++;
 			if(space_flag==2) // 숫자도 입력됬고 연산자도 입력됬을테니까 num의 i를 1높여야함
 			{
@@ -100,9 +101,11 @@ int main () {
 	for(int i=0 ; i<N ; i++)
 		printf("%d : %c\n",i,num[0][i]);
 
-
 	for(int i=0 ; i<N ; i++)
 		printf("%d : %c\n",i,num[1][i]);
+
+	for(int i=0 ; i<10 ; i++)
+		printf("%d : %c\n",i,op[i]);
 	return 0;
 }
 
