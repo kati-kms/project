@@ -99,7 +99,13 @@ int main () {
 			point_flag=0; // 소수점초기화
 		}
 	}
+<<<<<<< HEAD:Choiproject.c
 		cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+=======
+				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+
+	
+>>>>>>> 01cc2a8a676b3e3dab11fa15640b6280c3390b12:project.c
 	for(int j=0 ; j<N ; j++)
 		printf("%d : %c\n",j,stack[j]);
 
