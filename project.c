@@ -95,6 +95,9 @@ int main () {
 			count=0; // 자릿수 초기화
 		}
 	}
+				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+
+	
 	for(int j=0 ; j<N ; j++)
 		printf("%d : %c\n",j,stack[j]);
 
