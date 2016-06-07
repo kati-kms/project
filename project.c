@@ -33,7 +33,7 @@ int main () {
 	char num[10][N]; // 연산가능한 숫자가 i(1000)개
 	char op[10]; // 연산가능한 연산자도 i(1000)개
 	char stack[N]; // 자리수를 맞추기위한 stack 배열
-	int count=0; // 자릿수  count 하는거 (return값 저장)
+	int count=1; // 자릿수  count 하는거 (return값 저장)
 	int point_flag=0; //소수점확인
 	int space_flag=0; // space바 확인
 	
@@ -65,7 +65,7 @@ int main () {
 				}
 				else
 					count=cipher_save_stack_integers(c,stack,i);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
-
+				printf("count = %d\n", count);
 			}
 			else  //나중에 변수 선언들어오면 그것도 처리해야됨 if else를  나머지는 error뜨는함수로할수있게
 			{
@@ -74,15 +74,19 @@ int main () {
 					point_flag=1;
 				//	continue;
 				}
-				if(c=='+'||c=='-'||c=='*'||c=='/'||c=='%') // 연산자일 경우
+				else if(c=='+'||c=='-'||c=='*'||c=='/'||c=='%') // 연산자일 경우
 				{
 					cipher_save_op(c,op);  // op의 i번째 원소만 전달하고 싶었지만 실패 다 전달
+				}
+				else
+				{
+					printf("error\n");
+					return 0;
 				}
 			}//else에 그외   변수/여러명령어들/ 등  이랑  그것마저도 else이면 error처리;
 		}
 		else //c==' '
 		{
-			printf("%d\n",count);
 			if(space_flag==0)
 				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 			space_flag++;
@@ -90,19 +94,18 @@ int main () {
 			{
 				++i;
 				space_flag=0;// 다시 0으로
+				printf("\n");
 			}
 			point_flag=0; // 소수점초기화
-			count=0; // 자릿수 초기화
 		}
 	}
+		cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 	for(int j=0 ; j<N ; j++)
 		printf("%d : %c\n",j,stack[j]);
 
-	for(int i=0 ; i<N ; i++)
-		printf("%d : %c\n",i,num[0][i]);
-
-	for(int i=0 ; i<N ; i++)
-		printf("%d : %c\n",i,num[1][i]);
+	for (int m = 0; m <= i; m++)
+		for (int j = 0; j < N; j++)
+			printf("num[%2d][%2d] : %c\n", m, j, num[m][j]);
 
 	for(int i=0 ; i<10 ; i++)
 		printf("%d : %c\n",i,op[i]);
@@ -113,11 +116,11 @@ int main () {
 
 int cipher_save_stack_integers(int c, char stack[], int i) { //stack에 저장해둔다. ( ' ' 전까지 space바 전까지)
 	static int k=0;
-	static int count=0;
-	if(i!=k)
+	static int count=1;
+	if(i!=k)		//다음 숫자를 입력 받고자 할 때 count값을 1로 초기화 시키고 다시 다음 i까지 대기한다.
 	{
 		k++;
-		count=0;
+		count=1;
 	}
 
 	stack[count]=c; // 스택에  자릿수맞게 넣는다
