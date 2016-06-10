@@ -9,6 +9,7 @@
 //	int 컴마 ()
 //		stack을 해서 다시 역순으로 출력해서 stack의 k가 3의배수일때 ,찍기
 //  int 우선순위 ()
+	void priority(char num[][N], char op[], int i); // 우선순위 정할때 숫자랑 연산자랑 넘기고 현재 숫자가몇갠지(i)도 넘겨준다.
 //  int 변수()
 	int cipher_save_stack_integers(int c, char stack[N], int i); //stack에 저장해둔다. ( ' ' 전까지 space바 전까지)
     int cipher_save_num_integers(char num[][N], char stack[N], int count,int i); // count를 매개변수로 자릿수 함수만든다. num변수에 넣어줄때마다 호출?
@@ -33,6 +34,7 @@ int main () {
 	char num[10][N]; // 연산가능한 숫자가 i(1000)개
 	char op[10]; // 연산가능한 연산자도 i(1000)개
 	char stack[N]; // 자리수를 맞추기위한 stack 배열
+	int cipher_count[]={0}; // count가 최고일때 즉 자릿수 저장
 	int count=0; // 자릿수  count 하는거 (return값 저장)
 	int point_flag=0; //소수점확인
 	int space_flag=0; // space바 확인
@@ -83,6 +85,7 @@ int main () {
 		else //c==' '
 		{
 			printf("%d\n",count);
+			cipher_count[i]=count+1; // 자릿수 저장
 			if(space_flag==0)
 				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 			space_flag++;
@@ -95,7 +98,7 @@ int main () {
 			count=0; // 자릿수 초기화
 		}
 	}
-				cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+	cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 
 	
 	for(int j=0 ; j<N ; j++)
@@ -148,11 +151,11 @@ int cipher_save_num_integers(char num[][N], char stack[], int count,int i) { //s
 
 int cipher_save_num_decimal_places(int c, char num[][N],int i) { // num i번쨰 [N]을 받아서 (숫자한줄)  소수부분을 넣는다.
 	static int k=0;
-	static int j=50;
+	static int j=N-10;
 		if(i!=k)
 		{
 			k++;
-			j=50;
+			j=N-10;
 		}
 		num[i][j]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
 		++j;
@@ -166,6 +169,14 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 	++i; // 두번째 연산자를 위해서 i를 1증가
 	return 0;
 }
+
+
+/*void priority(char num[][N], char op[], int i){ // 우선순위 정할때 숫자랑 연산자랑 넘기고 현재 숫자가몇갠지(i)도 넘겨준다.
+	while
+		for(
+		if(op[j]
+*/
+
 
 /*
 int add_function () {
