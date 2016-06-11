@@ -14,7 +14,7 @@
     int cipher_save_num_integers(char num[][N], char stack[N], int count,int i); // count를 매개변수로 자릿수 함수만든다. num변수에 넣어줄때마다 호출?
 	int cipher_save_num_decimal_places(int c, char num[][N],int i); // num i번쨰 [N]을 받아서 (숫자한줄)  소수부분을 넣는다.
 	int cipher_save_op(int c, char op[]); // 연산자를 저장한다. // char op는 호출할때 원소 하나만 하니까 배열로안해도됌
-	void priority(char num[][N], char op[10], int how_num);
+	void priority(char, char, int, int);
 //  int _clear ()
 //  int _load() // 이런 명령들은 문자열비교 이용??
 //  int _save()
@@ -113,7 +113,7 @@ int main () {
 	for(int i=0 ; i<10 ; i++)
 		printf("%d : %c\n",i,op[i]);
 
-	priority (num[][N], op[]);				//입력은 여기까지 이제부터 본격적인 계산에 들어갑니다.얏호	
+	priority (char num, char op, int i int how_num);				//입력은 여기까지 이제부터 본격적인 계산에 들어갑니다.얏호	
 
 	return 0;
 }
@@ -199,30 +199,39 @@ void priority (char num[][N], char op[], int i, int how_num)
 			case '%':
 				higher_priority++;
 				break;
+			case '+':
+				break;
+			case '-':
+				break;
 			default:
+				printf("\n############################ F A T A L  E R R O R #######################\n");
 				break;
 		}
+		printf("op[%d] = %c\n", i, op[i]);
 	}
-	for (int i = 0; i < how_num - 1 || is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
+	for (int i = 0; i < how_num - 1 && is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
 		if(higher_priority >= 1)					//높은 우선순위가 존재하는가?
 		{
 			switch (op[i])
 			{
 				case '*':
-					multiply(num[i], num[i + 1]);	
+					//multiply(num[i], num[i + 1]);	
 					is_first_cal = 1;
 					higher_priority--;
+					how_num--;
 					break;
 				case '/':
-					divide(num[i], num[i + 1]);
+					//divide(num[i], num[i + 1]);
 					is_first_cal = 1;
 					higher_priority--;
+					how_num--;
 					break;
 				case '%':
-					mode(num[i], num[i + 1]);
+					//mode(num[i], num[i + 1]);
 					is_first_cal = 1;
 					higher_priority--;
+					how_num--;
 					break;
 				default:		//i번째 num 배열을 곧바로 result 배열로 넣고 싶어요
 					for (int k = N; k > 0; k--)
@@ -235,50 +244,58 @@ void priority (char num[][N], char op[], int i, int how_num)
 			switch (op[i])
 			{
 				case '+':
-					_addition(num[i], num[i + 1]);
+					//addition(num[i], num[i + 1]);
 					is_first_cal = 1;
 					break;
 				case '-':
-					substraction(num[i], num[i + 1]);
+					//substraction(num[i], num[i + 1]);
 					is_first_cal = 1;
 					break;
 				default:
-					ㅔprintf("\n############################ F A T A L  E R R O R #######################\n");
+					printf("\n############################ F A T A L  E R R O R #######################\n");
 			}
 		}
 		if (is_first_cal == 1)
 		{
-			for (int j = i + 1, int k = N; j < how_num - 1 ; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
+			for (int j = i + 1; j < how_num - 1 ; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
 			{
 				for (int k = N; k > 0; k--)
-					result[j][k + 940] = num[j + 1][k]
+					result[j][k + 940] = num[j + 1][k];
 				op[j - 1] = op[j];
 			}
 			how_num -= 1;									//당근 how_num을 1 감소시켜주어야 하는것 아니겠나요
 		}
 	}
 
-	while(how_num > 1)									//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
+	//test
+	//
+	//
+	for (int tst = 0; tst < N; tst++)
+		printf("result[%d] = %c\n", tst + 940, result[tst + 940]);
+
+
+	for (; how_num > 1; how_num--)						//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
 	{
+		int j = 0;
 		for(; higher_priority >= 1; higher_priority--)
 		{
-			for (int i = 0, int j = 0; j == 0; i++)		//음... 상위 우선순위에 있는 연산자부터 모두 처리하도록 했습니다. j를 사용, 계속 값들을 초기화 시키고 정렬하도록 만들었습니다. 높은 순위의 연산자가 계산되면 이 for문을 빠져나가(j = 1) higher_priority값을 줄이고 다시 반복한다.
+			for (int i = 0; j == 0; i++)		//음... 상위 우선순위에 있는 연산자부터 모두 처리하도록 했습니다. j를 사용, 계속 값들을 초기화 시키고 정렬하도록 만들었습니다. 높은 순위의 연산자가 계산되면 이 for문을 빠져나가(j = 1) higher_priority값을 줄이고 다시 반복한다.
 			{
 				switch (op[i])
 				{
 					case '*':
 						printf("Wow multiply function!!!!\n");
-						multiply(result[i], result[i + 1]);
+						//multiply(result[i], result[i + 1]);
 						j = 1;
 						break;
 					case '/':
 						printf("Wow division function!!!!\n");
-						divide(result[i], result[i + 1]);
+						//divide(result[i], result[i + 1]);
 						j = 1;
 						break;
 					case '%':
 						printf("Wow modular function!!!!\n");
-						mode(result[i], result[i + 1]);
+						//mode(result[i], result[i + 1]);
 						j = 1;
 						break;
 					case '+':
@@ -291,37 +308,41 @@ void priority (char num[][N], char op[], int i, int how_num)
 						printf("\n############################ F A T A L  E R R O R #######################\n");
 						break;
 				}
-				if (j == 1)				//숫자들 당기기;
+				if (j == 1)				//숫자들 당기기
 				{
+					how_num--;
 					for (int k = i + 1; k < how_num; k++)
 					{
-						result[k] = result[k + 1];
-						op[j - 1] = op[j];
+						for (int i = 0; i < 1000; i++)
+							result[k][i] = result[k + 1][i];
+						op[k - 1] = op[k];
 					}
-					how_num -= 1;	
 				}
 			}
 		}	
 
-		//이제부터는 낮은순위연산자 계산 파트. 항상 op[0]랑 result[0], result[1]만 고려하면 되니깐(어차피 계속 초기화 할꺼잖아) for문 필요 없겠네.
-		switch (op[0])
+		if (j == 0)
 		{
-			case '+':
-				printf("Wow addition function~~!!!\n");
-				addition(result[0], result[1]);
-				break;
-			case '-':
-				printf("Wow abstraction function~~~!!!\n");
-				substraction(result[0], result[1]);
-				break;
-			default:
-				printf("\n############################ F A T A L  E R R O R #######################\n");
-				break;
+			//이제부터는 낮은순위연산자 계산 파트. 항상 op[0]랑 result[0], result[1]만 고려하면 되니깐(어차피 계속 초기화 할꺼잖아) for문 필요 없겠네.
+			switch (op[0])
+			{
+				case '+':
+					printf("Wow addition function~~!!!\n");
+					//addition(result[0], result[1]);
+					break;
+				case '-':
+					printf("Wow abstraction function~~~!!!\n");
+					//substraction(result[0], result[1]);
+					break;
+				default:
+					printf("\n############################ F A T A L  E R R O R #######################\n");
+					break;
+			}
+			for (int k = 1; k < how_num; k++)
+				for (int i = 0; i < 1000; i++)
+					result[k][i] = result[k + 1][i]; 
 		}
-		for (int k = 1; k < how_num; k++)
-		{
-			result[k]
-		}
+		return;
 	}
 
 
