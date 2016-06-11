@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
 //	int add_function ()
 //	int minus_function ()
@@ -178,21 +179,56 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 */
 
 
-/*
-int add_function () {
-	char num1[N]={0};
-	char num2[N]={0};
-	char num3[N+1]={0};
-	int i;
 
-	for (i=1 ; i<=N ; i++)
+int add_function (int i, char num[][N], result[][1000]) { // int i는 몇번째 숫자인지; 
+
+	int larger_cipher;
+	int smaller_cipher;
+	int j,k;
+	int count[2];
+	int count_smaller;
+
+	if(strlen num[i]>strlen num[i+1])
 	{
-		num3[i] = num1[i]+num2[i];
-		if(num3[i]>10) // 더했을때 10보다큰경우
+		strcpy(tmp,num[i]);    // 큰숫자를 앞으로 두고 작은 숫자를 뒤에다 둔다 // 더하기에선 의미가 크지않지만 다른계산에선 필요할듯
+		strcpy(num[i],num[i+1]);
+		strcpy(num[i+1],tmp);
+	}
+	larger_cipher=N-count_smaller-strlen num[i]-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
+	smaller_cipher=N-count_smaller-strlen num[i+1]-1;; // 자리수 작은걸 cipher에 넣음
+
+// 배열안에 개행숫자 세보기
+		for(int j=i ; j<=i+1 ; j++)
 		{
-			num3[i]-=10;
-			num3[i+1]+=1;
+			for(int k=1000 ; ; k--)
+			{
+				if(num[j][k]!='\0')
+					count[j]++;
+				else
+					break;
+			}
+		}
+		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
+			
+
+//두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
+for(int j=i ; j<=j+1 ; j++)
+	for(k=N-smaller_count ; k>=larger_cipher ; k--)
+		num[j][k]-='0';               
+//계산
+	for(j=smaller_cipher ; j>=larger_cipher ; j--)
+	{
+		result[i][j] = num[i][j]+num[i+1][j];
+		if(result[i][j]>10) // 더했을때 10보다큰경우
+		{
+			result[i][j]-=10;
+			result[i+1]+=1;
 		}
 	}
+//숫자들을 다시 문자로
+for(int j=i ; j<=j+1 ; j++)
+	for(k=N-smaller_count ; k>=larger_cipher ; k--)
+		num[j][k]+='0';               
+
 	return 0;
-}*/
+}
