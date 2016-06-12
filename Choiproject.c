@@ -373,7 +373,7 @@ void priority (char num[][N], char op[], int i)
 //
 //
 //
-void substraction (char num[][N], int i, char result[][N])
+void substraction (char num[][N], int i, char result[][1000])
 {
 	//먼저 음수 에러처리부터 한다. 자릿수를 비교해서 빼는 수가 빼지는 수보다 커지면 에러.
 	int check[2][N] = {0};		//check 1, 2 는 59번째 배열부터 수를 확인하기 시작해서 59번째일때부터 변수를 하나씩 읽어나간다.
