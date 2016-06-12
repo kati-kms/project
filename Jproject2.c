@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
 //	int add_function ()
 //	int minus_function ()
@@ -93,7 +94,7 @@ int main () {
 				else if (c=='=')
 				{
 					var_flag++;
-					continue;
+					//  continue;
 				}
 				else
 					error = 1;//if(error==1){ printf("= error"); }
