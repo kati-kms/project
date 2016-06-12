@@ -14,7 +14,7 @@
     int cipher_save_num_integers(char num[][N], char stack[N], int count,int i); // count를 매개변수로 자릿수 함수만든다. num변수에 넣어줄때마다 호출?
 	int cipher_save_num_decimal_places(int c, char num[][N],int i); // num i번쨰 [N]을 받아서 (숫자한줄)  소수부분을 넣는다.
 	int cipher_save_op(int c, char op[]); // 연산자를 저장한다. // char op는 호출할때 원소 하나만 하니까 배열로안해도됌
-	void priority(char, char, int, int);
+	void priority(char num[][N], char op[], int i);
 //  int _clear ()
 //  int _load() // 이런 명령들은 문자열비교 이용??
 //  int _save()
@@ -113,7 +113,7 @@ int main () {
 	for(int i=0 ; i<10 ; i++)
 		printf("%d : %c\n",i,op[i]);
 
-	priority (char num, char op, int i int how_num);				//입력은 여기까지 이제부터 본격적인 계산에 들어갑니다.얏호	
+	priority (num,op,i);				//입력은 여기까지 이제부터 본격적인 계산에 들어갑니다.얏호	
 
 	return 0;
 }
@@ -178,15 +178,16 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 //	연산자 우선순위
 //
 //
-void priority (char num[][N], char op[], int i, int how_num)
+void priority (char num[][N], char op[], int i)
 {
-	int how_num = i;	//num 배열이 몇개까지 있습니까?
+	int how_num=i;
+
 	char result[][1000] = {0};	//num 이랑 num 끼리 최초계산한 뒤부터 result 배열로 전부 이사간다.
 	int higher_priority = 0;//높은 우선순위(*,/,%)가 하나라도 있으면 이 값은 1이 되어 그것부터 계산할 수 있도록 만든다.
 	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
 
 
-	for (int i = 0; i < how_num - 1 || higher_priority <= 1; i++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
+	for (int i = 0; i < how_num - 1 ; i++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
 	{
 		switch (op[i])
 		{
@@ -209,9 +210,10 @@ void priority (char num[][N], char op[], int i, int how_num)
 		}
 		printf("op[%d] = %c\n", i, op[i]);
 	}
+
 	for (int i = 0; i < how_num - 1 && is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
-		if(higher_priority >= 1)					//높은 우선순위가 존재하는가?
+		if(higher_priority > 0)					//높은 우선순위가 존재하는가?
 		{
 			switch (op[i])
 			{
@@ -255,7 +257,7 @@ void priority (char num[][N], char op[], int i, int how_num)
 					printf("\n############################ F A T A L  E R R O R #######################\n");
 			}
 		}
-		if (is_first_cal == 1)
+		if (is_first_cal == 1) // 이미 한번 연산이 수행됌
 		{
 			for (int j = i + 1; j < how_num - 1 ; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
 			{
@@ -342,8 +344,9 @@ void priority (char num[][N], char op[], int i, int how_num)
 				for (int i = 0; i < 1000; i++)
 					result[k][i] = result[k + 1][i]; 
 		}
-		return;
 	}
+		return;
+}
 
 
 /*
