@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
-//	int add_function ()
+int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번째 숫자인지; 
 //	int minus_function ()
 //	int multi_function ()
 //	int divide_function ()
@@ -33,6 +33,7 @@ int main () {
 	int i=0;
 //	int j;
 	char num[10][N]; // 연산가능한 숫자가 i(1000)개
+	char result[10][1000];
 	char op[10]; // 연산가능한 연산자도 i(1000)개
 	char stack[N]; // 자리수를 맞추기위한 stack 배열
 	int cipher_count[]={0}; // count가 최고일때 즉 자릿수 저장
@@ -180,22 +181,21 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 
 
 
-int add_function (int i, char num[][N], result[][1000]) { // int i는 몇번째 숫자인지; 
+int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇번째 숫자인지; 
 
+	char tmp[N];
 	int larger_cipher;
 	int smaller_cipher;
 	int j,k;
 	int count[2];
 	int count_smaller;
 
-	if(strlen num[i]>strlen num[i+1])
+	if(strlen(num[i])>strlen(num[i+1]))
 	{
 		strcpy(tmp,num[i]);    // 큰숫자를 앞으로 두고 작은 숫자를 뒤에다 둔다 // 더하기에선 의미가 크지않지만 다른계산에선 필요할듯
 		strcpy(num[i],num[i+1]);
 		strcpy(num[i+1],tmp);
 	}
-	larger_cipher=N-count_smaller-strlen num[i]-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
-	smaller_cipher=N-count_smaller-strlen num[i+1]-1;; // 자리수 작은걸 cipher에 넣음
 
 // 배열안에 개행숫자 세보기
 		for(int j=i ; j<=i+1 ; j++)
@@ -210,10 +210,12 @@ int add_function (int i, char num[][N], result[][1000]) { // int i는 몇번째 
 		}
 		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
 			
+		larger_cipher=N-count_smaller-strlen(num[i])-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
+		smaller_cipher=N-count_smaller-strlen(num[i+1])-1;; // 자리수 작은걸 cipher에 넣음
 
 //두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
 for(int j=i ; j<=j+1 ; j++)
-	for(k=N-smaller_count ; k>=larger_cipher ; k--)
+	for(k=N-count_smaller ; k>=larger_cipher ; k--)
 		num[j][k]-='0';               
 //계산
 	for(j=smaller_cipher ; j>=larger_cipher ; j--)
@@ -222,12 +224,12 @@ for(int j=i ; j<=j+1 ; j++)
 		if(result[i][j]>10) // 더했을때 10보다큰경우
 		{
 			result[i][j]-=10;
-			result[i+1]+=1;
+			result[i][j+1]+=1;
 		}
 	}
 //숫자들을 다시 문자로
 for(int j=i ; j<=j+1 ; j++)
-	for(k=N-smaller_count ; k>=larger_cipher ; k--)
+	for(k=N-count_smaller ; k>=larger_cipher ; k--)
 		num[j][k]+='0';               
 
 	return 0;
