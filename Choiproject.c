@@ -26,7 +26,7 @@
 
 int main () {
 	int c;
-	printf("최강플젝 강승호 & 김도형 \n");
+	printf("최강플젝 강승호\n");
 	printf("민석, 한다, 커밋 \n");
 	
 	int i=0;
