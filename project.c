@@ -3,7 +3,7 @@
 #include <string.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
 int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번째 숫자인지; 
-//	int minus_function ()
+void substraction (char num[][N], int i, char result[][1000]);
 //	int multi_function ()
 //	int divide_function ()
 //	int 소수점 ()
@@ -23,8 +23,8 @@ int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번
 //  int _end()
 //  int _var()
 //  int _error()
- 	int _order(char order[],int c);
-	int order_check(char order[]);
+ 	int _order(char order[],int c,int o);
+	int order_check(char order[],char vname[], char vnum[][N], int var_flag);
 
 
 
@@ -32,6 +32,8 @@ int main () {
 	int c;
 	int i=0;
 	int v=0;
+	int o=0;
+	int k=0;
 //	int j;
 	char num[10][N]; // 연산가능한 숫자가 i(1000)개
 	char result[10][1000];
@@ -63,6 +65,8 @@ int main () {
 	printf("민석, 한다, 커밋 \n");
 
 //while(end) {
+//for(int z=0 ; z<2 ; z++) 
+//{
 
 	printf("(Input) : ");
 
@@ -71,12 +75,12 @@ int main () {
 		if(c!=' ')//숫자,연산자  경계   마다 끊기 (숫자 / 연산자 )
 		{
 			if(( c>='a' && c<='z') || (c>='A' && c<='Z'))
-				_order(order,c);
+				_order(order,c,o);
 			else 
 			{
 				if(c=='1'||c=='2'||c=='3'||c=='4'||c=='5'||c=='6'||c=='7'||c=='8'||c=='9'||c=='0') // 숫자일경우
 				{
-					if(point_flag) //소수점이 존재했다면 이쪽으로 들어와서   소수첫째자리부터 시작
+					if(point_flag==1) //소수점이 존재했다면 이쪽으로 들어와서   소수첫째자리부터 시작
 					{
 						if(var_flag==1)
 							cipher_save_num_decimal_places(c,vnum,v,var_flag);   // 변수의 소수부분
@@ -90,16 +94,16 @@ int main () {
 							count=cipher_save_stack_integers(c,stack,i,var_flag);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
 				}
 //			else  //나중에 변수 선언들어오면 그것도 처리해야됨 if else를  나머지는 error뜨는함수로할수있게
-				if(c=='.')
+				else if(c=='.')
 				{
 					point_flag++;
 				//	continue;
 				}
-				if(c=='+'||c=='-'||c=='*'||c=='/'||c=='%') // 연산자일 경우
+				else if(c=='+'||c=='-'||c=='*'||c=='/'||c=='%') // 연산자일 경우
 				{
 					cipher_save_op(c,op);  // op의 i번째 원소만 전달하고 싶었지만 실패 다 전달
 				}
-				if(c=='=')
+				else if(c=='=')
 				{
 					var_flag++;
 				}
@@ -122,6 +126,8 @@ int main () {
 			if(space_flag==2) // 숫자도 입력됬고 연산자도 입력됬을테니까 num의 i를 1높여야함
 			{
 				++i;
+				if(var_flag==1)
+					--i;
 				space_flag=0;// 다시 0으로
 			}
 			point_flag=0; // 소수점초기화
@@ -131,13 +137,16 @@ int main () {
 
 	if(order[0] != 0)
 	{
-		order_check(order);
+		order_check(order,vname,vnum,var_flag);
 	}
 //	printf("%d\n",var_flag);
 	if(var_flag==1)
 	{
 		cipher_save_num_integers(vnum,stack,count,v); //vnum에 숫자입력받음
 		vname[v]=order[0]; // 변수이름 따로 저장
+		for(int i=0 ; i<6 ; i++)
+			order[i]=0;
+
 		var_flag=0; // 다시 변수를 받기 위해 초기화
 		v++;
 	}
@@ -146,7 +155,7 @@ int main () {
 
 	if(error==1)
 		printf("(error)\n");
-	
+//}
 //	priority(num,op,i);
 
 	for(int j=0 ; j<N ; j++)
@@ -262,12 +271,14 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 	return 0;
 }
 
-int _order(char order[], int c) {
-	static int i=0;
-	order[i++]=c;
+int _order(char order[], int c, int o) {
+	static int k=0;
+	if(o)
+		k=0;
+	order[k++]=c;
 }
 
-int order_check(char order[]) {
+int order_check(char order[], char name[], char num[][N], int var_flag) {
 	if(order[0] =='e' && order[1]=='n' && order[2]=='d' && order[3]==0)
 	{
 		system("exit");
@@ -276,7 +287,44 @@ int order_check(char order[]) {
 	{
 		system("clear");
 	}
-	return 0;
+	else if(var_flag)
+	{
+		int i=0;
+		printf("= ");
+		for( ; i<10 ; i++)
+		{
+			if(name[i]!=order[0])
+				continue;
+			if(name[i]==order[0])
+			{
+				for(int j=0 ; j<N ; j++)
+				{
+					printf("%c",num[i][j]);
+				}
+				break;
+			}
+			if(i==10)
+				printf("undefined");
+		}
+		printf("\n");
+		return 0;
+	}
+	else if(order[0]=='V' && order[1]=='A' && order[2]=='R' && order[3]==0)
+	{
+		if(name[0]==0 && name[1]==0 && name[2]==0 && name[3]==0 && name[4]==0 && name[5]==0 && name[6]==0 && name[7]==0 && name[8]==0 && name[9]==0)
+		{
+			printf("정의된 변수 없음\n");
+		}
+		else
+			for(int i=0 ; i<10 ; i++)
+			{
+				printf("%c = ",name[i]);
+				for(int j=0 ; j<N ; j++)
+					printf("%c",num[i][j]);
+				printf("\n");
+			}
+	}
+		return 0;
 }
 
 //	연산자 우선순위
@@ -499,7 +547,7 @@ int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇�
 	int count[2];
 	int count_smaller;
 
-	if(strlen(num[i])>strlen(num[i+1]))
+	if(strlen(num[i])<strlen(num[i+1])) // num[i]가 더 긴 그림을 원함
 	{
 		strcpy(tmp,num[i]);    // 큰숫자를 앞으로 두고 작은 숫자를 뒤에다 둔다 // 더하기에선 의미가 크지않지만 다른계산에선 필요할듯
 		strcpy(num[i],num[i+1]);
@@ -509,7 +557,7 @@ int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇�
 // 배열안에 개행숫자 세보기
 		for(int j=i ; j<=i+1 ; j++)
 		{
-			for(int k=1000 ; ; k--)
+			for(int k=N ; ; k--)
 			{
 				if(num[j][k]!='\0')
 					count[j]++;
@@ -520,7 +568,7 @@ int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇�
 		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
 			
 		larger_cipher=N-count_smaller-strlen(num[i])-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
-		smaller_cipher=N-count_smaller-strlen(num[i+1])-1;; // 자리수 작은걸 cipher에 넣음
+		smaller_cipher=N-count_smaller-strlen(num[i+1])-1; // 자리수 작은걸 cipher에 넣음
 
 //두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
 for(int j=i ; j<=j+1 ; j++)
@@ -542,4 +590,116 @@ for(int j=i ; j<=j+1 ; j++)
 		num[j][k]+='0';               
 
 	return 0;
+}
+
+int multiply_function(int i, char num[][N], char result[][1000]) {
+
+	char tmp[N];
+	int larger_cipher;
+	int smaller_cipher;
+	int j,k;
+	int count[2];
+	int count_smaller;
+	char multi[][N]={0};
+
+	if(strlen(num[i])>strlen(num[i+1]))
+	{
+		strcpy(tmp,num[i]);    // 큰숫자를 앞으로 두고 작은 숫자를 뒤에다 둔다 // 더하기에선 의미가 크지않지만 다른계산에선 필요할듯
+		strcpy(num[i],num[i+1]);
+		strcpy(num[i+1],tmp);
+	}
+
+// 배열안에 개행숫자 세보기
+		for(int j=i ; j<=i+1 ; j++)
+		{
+			for(int k=N ; ; k--)
+			{
+				if(num[j][k]!='\0')
+					count[j]++;
+				else
+					break;
+			}
+		}
+		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
+			
+		larger_cipher=N-count_smaller-strlen(num[i])-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
+		smaller_cipher=N-count_smaller-strlen(num[i+1])-1; // 자리수 작은걸 cipher에 넣음
+
+//두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
+for(int j=i ; j<=j+1 ; j++)
+	for(k=N-count_smaller ; k>=larger_cipher-strlen(num[i+1]) ; k--) //최소 부터 최대까지
+		num[j][k]-='0';               
+//계산
+	for(j=smaller_cipher ; j>=larger_cipher ; j--)
+	{
+		multi[i][j] = num[i][j]*num[i+1][j];
+		if(multi[i][j]>=10)
+			 multi[i][j+1]+=multi[i][j]/10;
+	}
+//곱한것들 더하기계산
+	for(j=1000-count[j] ; j>=larger_cipher-strlen(num[i+1]) ; j--)
+		for(int k=0 ; k<strlen(num[i+1]) ; k++)
+		{
+			result[i][j] += multi[k][j];   //이부분 나중에 확인좀
+			if(result[i][j]>10) // 더했을때 10보다큰경우
+			{
+				result[i][j]-=10;
+				result[i][j+1]+=1;
+			}
+		}
+//숫자를 다시 문자열들로
+	for(int j=i ; j<=j+1 ; j++)
+		for(k=N-count_smaller ; k>=larger_cipher-strlen(num[i+1]) ; k--) //최소 부터 최대까지
+			num[j][k]+='0';               
+
+		return 0;
+}
+//SUBSTRACTION
+//
+void substraction (char num[][N], int i, char result[][1000])
+{
+	//먼저 음수 에러처리부터 한다. 자릿수를 비교해서 빼는 수가 빼지는 수보다 커지면 에러.
+	int check[2][N] = {0};		//check 1, 2 는 59번째 배열부터 수를 확인하기 시작해서 59번째일때부터 변수를 하나씩 읽어나간다.
+	int diff = 0;
+
+	for (int k = 0; k < 2; k++, i++)		//check1, check2에 각각의 check 배열을 집어넣어준다.
+	{
+		for (int x = 1; x < N; x++)			//60번째 num배열부터 읽아들어가고 null문자이면 0을 심어주고 아니면 만약 정수부분이라면 check변수를 증가시켜 빼는 수들과 빼지는 수들의 자릿수를 비교한다.
+		{
+			if (num[i][59 - x] == 0)
+			{
+				if (check[k][x] > 0)
+					break;
+				else
+					num[i][60 - check[k][x]] = '0';
+			}
+			else if (x > 9)					//49번째 배열부터 check 변수 증가.
+				check[k][x]++;
+		}
+	}
+
+	if (check[0] < check[1])				//오류(음수가 나오는 경우 에러처리)
+		printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
+	else if (check[0] == check[1])
+	{
+		for (int k = 0; k < check[0][k]; k++)
+		{
+			if (num[i][50 - check[0][k] + k] > num[i + 1][50 - check[0][k] + k])		//두 변수의 자릿값이 같다면 다시 59번째로 돌아가면서 비교한다. 하나라도 빼지는 수가 크다면 오류가 아니다.
+				break;
+			else if (num[i][50 - check[0][k] + k] < num[i + 1][50 - check[0][k] + k])
+				printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
+		}
+	}
+	
+	for (int x = 1; x < N; x++)				//이제는 드디어 뺄셈 부분 들어간다! 어차피 전부 char형이니 뺀 결과가 48('0') 보다 작으면 10 더하고 다음 배열에 1을 빼주는 방식으로 가자.
+	{
+		result[i][59 - x] = num[i][59 - x] - num[i + 1][59 - x];
+		if (result[i][59 - x] < 48)
+		{
+			result[i][59 - x] += 10;
+			num[i][58 - x]--;
+		}
+	}
+
+	return;
 }
