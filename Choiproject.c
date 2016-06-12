@@ -182,12 +182,15 @@ void priority (char num[][N], char op[], int i)
 {
 	int how_num=i;
 
-	char result[][1000] = {0};	//num 이랑 num 끼리 최초계산한 뒤부터 result 배열로 전부 이사간다.
+	char result[10][1000];	//num 이랑 num 끼리 최초계산한 뒤부터 result 배열로 전부 이사간다.
 	int higher_priority = 0;//높은 우선순위(*,/,%)가 하나라도 있으면 이 값은 1이 되어 그것부터 계산할 수 있도록 만든다.
 	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
 
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 1000; j++)
+			result[i][j] = 0;
 
-	for (int i = 0; i < how_num - 1 ; i++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
+	for (int i = 0; i < how_num ; i++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
 	{
 		switch (op[i])
 		{
@@ -209,27 +212,32 @@ void priority (char num[][N], char op[], int i)
 				break;
 		}
 		printf("op[%d] = %c\n", i, op[i]);
+		printf("higher priority = %d\n", higher_priority);
 	}
+		printf("how_num = %d\n", how_num);
 
-	for (int i = 0; i < how_num - 1 && is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
+	for (int i = 0; i < how_num && is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
-		if(higher_priority > 0)					//높은 우선순위가 존재하는가?
+		if(higher_priority >= 1)					//높은 우선순위가 존재하는가?
 		{
 			switch (op[i])
 			{
 				case '*':
+					printf("asterisk\n");
 					//multiply(num[i], num[i + 1]);	
 					is_first_cal = 1;
 					higher_priority--;
 					how_num--;
 					break;
 				case '/':
+					printf("slash\n");
 					//divide(num[i], num[i + 1]);
 					is_first_cal = 1;
 					higher_priority--;
 					how_num--;
 					break;
 				case '%':
+					printf("percent\n");
 					//mode(num[i], num[i + 1]);
 					is_first_cal = 1;
 					higher_priority--;
@@ -246,10 +254,12 @@ void priority (char num[][N], char op[], int i)
 			switch (op[i])
 			{
 				case '+':
+					printf("plus\n");
 					//addition(num[i], num[i + 1]);
 					is_first_cal = 1;
 					break;
 				case '-':
+					printf("minus\n");
 					//substraction(num[i], num[i + 1]);
 					is_first_cal = 1;
 					break;
@@ -259,7 +269,7 @@ void priority (char num[][N], char op[], int i)
 		}
 		if (is_first_cal == 1) // 이미 한번 연산이 수행됌
 		{
-			for (int j = i + 1; j < how_num - 1 ; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
+			for (int j = i + 1; j < how_num; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
 			{
 				for (int k = N; k > 0; k--)
 					result[j][k + 940] = num[j + 1][k];
@@ -267,13 +277,16 @@ void priority (char num[][N], char op[], int i)
 			}
 			how_num -= 1;									//당근 how_num을 1 감소시켜주어야 하는것 아니겠나요
 		}
+		printf("is first cal 존재? : %d\n", is_first_cal);
+		printf("is first cal이 1이면 곧바로 뒤로 넘어갑니다. 하하.\n");
 	}
 
 	//test
 	//
 	//
-	for (int tst = 0; tst < N; tst++)
-		printf("result[%d] = %c\n", tst + 940, result[tst + 940]);
+	for (int tst_i = 0; tst_i < 10; tst_i++)
+		for (int tst_j = 0; tst_j < N; tst_j++)
+			printf("result[%d][%d] = %c\n", tst_i, tst_j + 940, result[tst_i][tst_j + 940]);
 
 
 	for (; how_num > 1; how_num--)						//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
