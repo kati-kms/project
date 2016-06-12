@@ -368,6 +368,60 @@ void priority (char num[][N], char op[], int i)
 }
 
 
+
+//SUBSTRACTION
+//
+//
+//
+void substraction (char num[][N], int i, char result[][N])
+{
+	//먼저 음수 에러처리부터 한다. 자릿수를 비교해서 빼는 수가 빼지는 수보다 커지면 에러.
+	int check[2][N] = {0};		//check 1, 2 는 59번째 배열부터 수를 확인하기 시작해서 59번째일때부터 변수를 하나씩 읽어나간다.
+	int diff = 0;
+
+	for (int k = 0; k < 2; k++, i++)		//check1, check2에 각각의 check 배열을 집어넣어준다.
+	{
+		for (int x = 1; x < N; x++)			//60번째 num배열부터 읽아들어가고 null문자이면 0을 심어주고 아니면 만약 정수부분이라면 check변수를 증가시켜 빼는 수들과 빼지는 수들의 자릿수를 비교한다.
+		{
+			if (num[i][59 - x] == 0)
+			{
+				if (check[k][x] > 0)
+					break;
+				else
+					num[i][60 - check[k][x]] = '0';
+			}
+			else if (x > 9)					//49번째 배열부터 check 변수 증가.
+				check[k][x]++;
+		}
+	}
+
+	if (check[0] < check[1])				//오류(음수가 나오는 경우 에러처리)
+		printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
+	else if (check[0] == check[1])
+	{
+		for (int k = 0; k < check[0][k]; k++)
+		{
+			if (num[i][50 - check[0][k] + k] > num[i + 1][50 - check[0][k] + k])		//두 변수의 자릿값이 같다면 다시 59번째로 돌아가면서 비교한다. 하나라도 빼지는 수가 크다면 오류가 아니다.
+				break;
+			else if (num[i][50 - check[0][k] + k] < num[i + 1][50 - check[0][k] + k])
+				printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
+		}
+	}
+	
+	for (int x = 1; x < N; x++)				//이제는 드디어 뺄셈 부분 들어간다! 어차피 전부 char형이니 뺀 결과가 48('0') 보다 작으면 10 더하고 다음 배열에 1을 빼주는 방식으로 가자.
+	{
+		result[i][59 - x] = num[i][59 - x] - num[i + 1][59 - x];
+		if (result[i][59 - x] < 48)
+		{
+			result[i][59 - x] += 10;
+			num[i][58 - x]--;
+		}
+	}
+
+	return;
+}
+
+
 /*
 		for (int i = 1; i < how_num - 1; i++)		//두번째 계산부터는 num이 아니라 result로 계산.
 		{
