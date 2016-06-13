@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #define N 60 // 소숫점포함 널문자 포함 61자리 (num배열에는 소수점이없으니까 60) 널문자는있지
-int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번째 숫자인지; 
-void substraction (char num[][N], int i, char result[][1000]);
-//	int multi_function ()
+void add_function (int i, char num[][N]); // int i는 몇번째 숫자인지; 
+void substraction (char num[][N], int j, int how_num);
+int multiply_function(int i, char num[][N]);
+void divide_function(char num[][N] ,int i); 
 //	int divide_function ()
 //	int 소수점 ()
 //		.을만나면 들어오고 
@@ -31,12 +32,11 @@ void substraction (char num[][N], int i, char result[][1000]);
 int main () {
 	int c;
 	int i=0;
-	int v=0;
+	int v=0;//변수
 	int o=0;
 	int k=0;
 //	int j;
 	char num[10][N]; // 연산가능한 숫자가 i(1000)개
-	char result[10][1000];
 	char op[10]; // 연산가능한 연산자도 i(1000)개
 	char order[6]={0};
 	char vnum[10][N]={0}; // 변수에 해당하는 숫자저장을 위한 배열
@@ -64,9 +64,8 @@ int main () {
 	printf("최강플젝 강승호 \n");
 	printf("민석, 한다, 커밋 \n");
 
-//while(end) {
-//for(int z=0 ; z<2 ; z++) 
-//{
+//while(1) {
+	for(int z=0 ; z<10 ; z++) {
 
 	printf("(Input) : ");
 
@@ -74,7 +73,7 @@ int main () {
 	{
 		if(c!=' ')//숫자,연산자  경계   마다 끊기 (숫자 / 연산자 )
 		{
-			if(( c>='a' && c<='z') || (c>='A' && c<='Z'))
+			if(( c>='a' && c<='z') || (c>='A' && c<='Z')) //문자일경우
 				_order(order,c,o);
 			else 
 			{
@@ -113,7 +112,7 @@ int main () {
 		}
 		else //c==' '
 		{
-			printf("%d\n",count);
+//			printf("%d\n",count);
 			cipher_count[i]=count+1; // 자릿수 저장
 			if(space_flag==0)
 			{
@@ -135,29 +134,54 @@ int main () {
 		}
 	} //while (\n) 끝
 
-	if(order[0] != 0)
-	{
-		order_check(order,vname,vnum,var_flag);
-	}
 //	printf("%d\n",var_flag);
 	if(var_flag==1)
 	{
 		cipher_save_num_integers(vnum,stack,count,v); //vnum에 숫자입력받음
 		vname[v]=order[0]; // 변수이름 따로 저장
-		for(int i=0 ; i<6 ; i++)
-			order[i]=0;
-
-		var_flag=0; // 다시 변수를 받기 위해 초기화
-		v++;
+	
+		var_flag=0; //다시 변수를 받기 위해 초기화
+		if(v<10) //입력받은 변수가 10개미만
+			v++;
+		else
+			printf("변수는 10개까지 받을 수 있습니다\n");
 	}
-	else	
-		cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+	else
+		cipher_save_num_integers(num,stack,count,i);
+
+	if(order[0] != 0)//문자를 입력받았으면
+	{
+		order_check(order,vname,vnum,var_flag);
+	}
+
+	for(int i=0; i<6 ; i++)
+		order[i]=0;
+
+	o=1;
+	_order(order,c,o);
+	o=0;
 
 	if(error==1)
 		printf("(error)\n");
-//}
+
 	priority(num,op,i);
 
+
+	printf(" = ");
+	for(int i=0 ; i<N ;i++)
+	{
+		if(i%3==2&&num[0][i]!='\0'&&i!=50)
+			printf(","); // 세자리마다 찍기
+		if(i==50&&num[0][50]!='\0')
+			printf("."); // 소숫점
+		printf("%c",num[0][i]); // 결과값임
+	}
+	printf("\n");
+
+//}
+
+//for test
+/*
 	for(int j=0 ; j<N ; j++)
 		printf("stack %d : %c\n",j,stack[j]);
 
@@ -187,7 +211,8 @@ int main () {
 		printf("%d : %c\n",i,vname[i]);
 
 		printf("var_flag = %d",var_flag);
-
+		*/
+	}
 	return 0;
 }
 
@@ -250,7 +275,7 @@ int cipher_save_num_decimal_places(int c, char num[][N],int i, int var_flag) { /
 			vk++;
 			vj=N-10;
 		}
-		num[i][j++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
+		num[i][vj++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
 		return 0;
 	}
 	else
@@ -273,77 +298,142 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 
 int _order(char order[], int c, int o) {
 	static int k=0;
-	if(o)
+	if(o==1)
+	{
 		k=0;
+		return 0;
+	}
 	order[k++]=c;
 }
 
-int order_check(char order[], char name[], char num[][N], int var_flag) {
+int order_check(char order[], char vname[], char vnum[][N], int var_flag) {
+	int ch;
 	if(order[0] =='e' && order[1]=='n' && order[2]=='d' && order[3]==0)
 	{
+		printf("프로그램을 종료합니다.\n");
 		system("exit");
 	}
-	else if(order[0]=='c' && order[1]=='l' && order[2]=='e' && order[3]=='a' && order[4]=='r' && order[5]==0)
+	else if(order[0]=='c' && order[1]=='l' && order[2]=='e' && order[3]=='a' && order[4]=='r' && order[5]==0) // clear입력받으면
 	{
 		system("clear");
 	}
-	else if(var_flag)
+	else if(var_flag) // 변수입력받으면
 	{
 		int i=0;
+		int a=0;
 		printf("= ");
 		for( ; i<10 ; i++)
 		{
-			if(name[i]!=order[0])
+			if(vname[i]!=order[0])
 				continue;
-			if(name[i]==order[0])
+			if(vname[i]==order[0])
 			{
 				for(int j=0 ; j<N ; j++)
 				{
-					printf("%c",num[i][j]);
+					printf("%c",vnum[i][j]);
 				}
+				a=1;
 				break;
 			}
-			if(i==10)
-				printf("undefined");
 		}
+		if(a=0) //저장된변수에 입력된 변수의 이름이 없으면
+			printf("undefined");
 		printf("\n");
-		return 0;
 	}
 	else if(order[0]=='V' && order[1]=='A' && order[2]=='R' && order[3]==0)
 	{
-		if(name[0]==0 && name[1]==0 && name[2]==0 && name[3]==0 && name[4]==0 && name[5]==0 && name[6]==0 && name[7]==0 && name[8]==0 && name[9]==0)
+		if(vname[0]==0 && vname[1]==0 && vname[2]==0 && vname[3]==0 && vname[4]==0 && vname[5]==0 && vname[6]==0 && vname[7]==0 && vname[8]==0 && vname[9]==0)
 		{
 			printf("정의된 변수 없음\n");
 		}
 		else
 			for(int i=0 ; i<10 ; i++)
 			{
-				printf("%c = ",name[i]);
-				for(int j=0 ; j<N ; j++)
-					printf("%c",num[i][j]);
-				printf("\n");
-			}
+				if(vname[i] != 0) //변수가 존재하지 않으면 출력하지않음)
+				{
+					printf("%c = ",vname[i]); //변수랑 숫자출력
+					for(int j=0 ; j<N ; j++)
+					{
+						if(j==50)
+							printf(".");
+						if(j%3==0&&vnum[i][j]!='\0')
+							printf(","); // 세자리마다 찍기
+						printf("%c",vnum[i][j]);
+					}
+					printf("\n");
+				}
+			}	
 	}
-		return 0;
+	else if(order[0]=='l' && order[1]=='o' && order[2]=='a' && order[3]=='d' && order[4]==0) //load입력 받으면
+	{
+		int i=0,j=0,k=0;
+		FILE *file=fopen("file.txt","rt"); //file.txt를 현재 디렉토리에서 텍스트전용 읽기 모드로 연다
+		if (file == NULL)
+			printf("저장된 변수가 없습니다.\n");
+		else
+		{
+			while (ch = getc(file) != EOF)
+			{
+				if (ch == '\n') //파일입력이 계행일 경우 j를증가
+				{
+					j++;
+					k = 0; //변수를 다시저장하기 위해 초기화
+				}
+
+				if (ch >= 'a'&&ch <= 'z' || ch >= 'A'&&ch <= 'Z') //파일입력이 문자일 경우 입력문자배열에 저장
+					vname[i++] = ch;
+				else
+					vnum[j][k++] = ch; //숫자를 변수배열에 저장
+			}
+		}
+		
+		fclose(file);
+	}
+	else if (order[0] == 's'&&order[1] == 'a'&&order[2] == 'v'&&order[3] == 'e'&&order[4] == 0) //save 입력 받으면
+	{
+		FILE *file = fopen("file.txt", "wt"); //file.txt를 쓰기모드로 열기(없으면 새로생성)
+		for (int i = 0; i < N; i++)
+		{
+			if (vname[i] != 0)  //현재 입력받은변수가 있다면
+			{
+				putc(vname[i], file); //변수이름 파일에저장
+				for (int j = 0; j < N; j++)  //숫자를 파일에저장
+				{
+					putc(vnum[i][j], file);
+				}
+				putc('\n', file);  //변수를 모두 저장하면 줄바꿈(계행 저장)
+			}
+		}
+		fclose(file); //file이 가리키는 포인터 파일 닫기
+	}
+	else
+		printf("= error : 잘못된문자\n");
+	return 0;
 }
+
+
 
 //	연산자 우선순위
 
-void priority (char num[][N], char op[], int i)
+void priority (char num[10][N], char op[], int i)
 {
-	int how_num=i;
+	//test
+	//
+	//
+	printf("priority 들어오자마자 출력한 배열값들\n");
+	for (int tst_i = 0; tst_i < 3; tst_i++)
+		for (int tst_j = 0; tst_j < N; tst_j++)
+			printf("num[%d][%d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
+	printf("\n");
 
-	char result[10][1000];	//num 이랑 num 끼리 최초계산한 뒤부터 result 배열로 전부 이사간다.
+	int how_num = i + 1;
 	int higher_priority = 0;//높은 우선순위(*,/,%)가 하나라도 있으면 이 값은 1이 되어 그것부터 계산할 수 있도록 만든다.
-	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
+//	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
 
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 1000; j++)
-			result[i][j] = 0;
 
-	for (int i = 0; i < how_num ; i++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
+	for (int j = 0; j < how_num - 1 ; j++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
 	{
-		switch (op[i])
+		switch (op[j])
 		{
 			case '*':
 				higher_priority++;
@@ -362,84 +452,78 @@ void priority (char num[][N], char op[], int i)
 				printf("\n############################ F A T A L  E R R O R #######################\n원인은 바로 연산자와는 별개인 놈을 집어넣었기 때문입니다.\n");
 				break;
 		}
-		printf("op[%d] = %c\n", i, op[i]);
+		printf("op[%d] = %c\n", j, op[j]);
 		printf("higher priority = %d\n", higher_priority);
 	}
 		printf("how_num = %d\n", how_num);
 
-	for (int i = 0; i < how_num && is_first_cal == 0; i++)	//계산을 아직 한번도 수행하지 않았을 때
+	for (int j = 0; j < how_num - 1 ; j++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
 		if(higher_priority >= 1)					//높은 우선순위가 존재하는가?
 		{
-			switch (op[i])
+			switch (op[j])
 			{
 				case '*':
 					printf("asterisk\n");
-					//multiply(num[i], num[i + 1]);	
-					is_first_cal = 1;
+					//multiply(num[j], num[j + 1]);	
 					higher_priority--;
 					how_num--;
 					break;
 				case '/':
 					printf("slash\n");
-					//divide(num[i], num[i + 1]);
-					is_first_cal = 1;
+					//divide(num[j], num[j + 1]);
 					higher_priority--;
 					how_num--;
 					break;
 				case '%':
 					printf("percent\n");
-					//mode(num[i], num[i + 1]);
-					is_first_cal = 1;
+					//mode(num[j], num[j + 1]);
 					higher_priority--;
 					how_num--;
 					break;
-				default:		//i번째 num 배열을 곧바로 result 배열로 넣고 싶어요
-					for (int k = N; k > 0; k--)
-						result[i][k + 940] = num[i][k];
+				default:	
 					break;
 			}
 		}
 		else//higher_priority == 0	//이때는 그냥 맨 처음 두놈만 계산시키고 빠져나간다. 
 		{
-			switch (op[i])
+			switch (op[j])
 			{
 				case '+':
 					printf("plus\n");
-					add_function (i, num, result); 
-					is_first_cal = 1;
+					add_function (j, num); 
 					break;
 				case '-':
 					printf("minus\n");
-					substraction (num, i);
-					is_first_cal = 1;
+					substraction (num, j, how_num);
 					break;
 				default:
-					printf("\n############################ F A T A L  E R R O R #######################\n이 문제의 ");
+					printf("\n############################ F A T A L  E R R O R #######################\n이 문제의 원인은 처음 두놈 계산할 때 엉뚱한 연산자가 나와서이다.\n");
 			}
 		}
-		if (is_first_cal == 1) // 이미 한번 연산이 수행됌
+		//숫자 당겨주기
+		for (int k = 1; k < how_num; k++)
 		{
-			for (int j = i + 1; j < how_num + 1; j++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
+			for (int i = 0; i < N; i++)
 			{
-				for (int k = N; k > 0; k--)
-					result[j][k + 940] = num[j + 1][k];
-				op[j - 1] = op[j];
+				num[k][i] = num[k + 1][i];
+				printf("숫자당기기 체크 num[%d][%d] = %c\n", k - 1, i, num[k - 1][i]);
 			}
-			how_num -= 1;									//당근 how_num을 1 감소시켜주어야 하는것 아니겠나요
 		}
-		printf("is first cal 존재? : %d\n", is_first_cal);
 	}
 
 	//test
 	//
 	//
-	for (int tst_i = 0; tst_i < 10; tst_i++)
-		for (int tst_j = 0; tst_j < N; tst_j++)
-			printf("result[%d][%d] = %c\n", tst_i, tst_j + 940, result[tst_i][tst_j + 940]);
-	printf("how_num = %d", how_num);
+	//
+/*	printf("priority 함수 결점 체크 for문.\n");
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < N; j++)
+			printf("num[%2d][%2d] = %c\n", i, j, num[i][j]);
+*/
+}
 
-	printf("\n");
+
 
 /*	for (; how_num > 1; how_num--)						//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
 	{
@@ -538,7 +622,7 @@ void priority (char num[][N], char op[], int i)
 	}
 }	*/
 
-int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇번째 숫자인지; 
+void add_function (int i, char num[][N]) { // int i는 몇번째 숫자인지; 
 
 	char tmp[N];
 	int larger_cipher;
@@ -553,7 +637,7 @@ int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇�
 		strcpy(num[i],num[i+1]);
 		strcpy(num[i+1],tmp);
 	}
-
+/*
 // 배열안에 개행숫자 세보기
 		for(int j=i ; j<=i+1 ; j++)
 		{
@@ -565,34 +649,44 @@ int add_function (int i, char num[][N], char result[][1000]) { // int i는 몇�
 					break;
 			}
 		}
-		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
-			
-		larger_cipher=N-count_smaller-strlen(num[i])-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
-		smaller_cipher=N-count_smaller-strlen(num[i+1])-1; // 자리수 작은걸 cipher에 넣음
-
+*/
 //두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
-for(int j=i ; j<=j+1 ; j++)
-	for(k=N-count_smaller ; k>=larger_cipher ; k--)
-		num[j][k]-='0';               
-//계산
-	for(j=smaller_cipher ; j>=larger_cipher ; j--)
-	{
-		result[i][j] = num[i][j]+num[i+1][j];
-		if(result[i][j]>10) // 더했을때 10보다큰경우
+
+	for(int j=i ; j<=i+1 ; j++)
+		for(k=N ; k>=0 ; k--)
 		{
-			result[i][j]-=10;
-			result[i][j+1]+=1;
+			if(num[j][k]!=0)
+			num[j][k]-='0';               
+		}
+	
+//계산
+	for(j=N ; j>=0 ; j--)
+	{
+		num[i][j] = num[i][j]+num[i+1][j];
+		if(num[i][j]>10) // 더했을때 10보다큰경우
+		{
+			num[i][j]-=10;
+			num[i][j+1]+=1;
 		}
 	}
 //숫자들을 다시 문자로
-for(int j=i ; j<=j+1 ; j++)
-	for(k=N-count_smaller ; k>=larger_cipher ; k--)
-		num[j][k]+='0';               
+	for(int j=i ; j<=i+1 ; j++)
+		for(k=N ; k>=0 ; k--)
+		{
+			if(num[j][k]!=0)
+			num[j][k]+='0';               
+		}
 
-	return 0;
+/*
+	printf("계산 후 값을 출력합니다.\n");
+	for (int tst_i = 0; tst_i < 3; tst_i++)
+		for (int tst_j = 0; tst_j < N; tst_j++)
+			printf("num[%2d][%2d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
+*/
+	return ;
 }
 
-int multiply_function(int i, char num[][N], char result[][1000]) {
+int multiply_function(int i, char num[][N]) {
 
 	char tmp[N];
 	int larger_cipher;
@@ -602,104 +696,142 @@ int multiply_function(int i, char num[][N], char result[][1000]) {
 	int count_smaller;
 	char multi[][N]={0};
 
-	if(strlen(num[i])>strlen(num[i+1]))
-	{
-		strcpy(tmp,num[i]);    // 큰숫자를 앞으로 두고 작은 숫자를 뒤에다 둔다 // 더하기에선 의미가 크지않지만 다른계산에선 필요할듯
-		strcpy(num[i],num[i+1]);
-		strcpy(num[i+1],tmp);
-	}
-
-// 배열안에 개행숫자 세보기
-		for(int j=i ; j<=i+1 ; j++)
-		{
-			for(int k=N ; ; k--)
-			{
-				if(num[j][k]!='\0')
-					count[j]++;
-				else
-					break;
-			}
-		}
-		count_smaller=(count[i] < count[i+1]) ? count[i] : count[i+1]; 
-			
-		larger_cipher=N-count_smaller-strlen(num[i])-1; // 전체길이 - 소수빈부분 - 숫자길이 - 널문자한개 =  배열에 있는 숫자들 시작점?
-		smaller_cipher=N-count_smaller-strlen(num[i+1])-1; // 자리수 작은걸 cipher에 넣음
+	
 
 //두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
-for(int j=i ; j<=j+1 ; j++)
-	for(k=N-count_smaller ; k>=larger_cipher-strlen(num[i+1]) ; k--) //최소 부터 최대까지
-		num[j][k]-='0';               
+	for(int j=i ; j<=i+1 ; j++)
+		for(k=N ; k>=0 ; k--)
+		{
+			if(num[j][k]!=0)
+			num[j][k]-='0';               
+		}
+
 //계산
-	for(j=smaller_cipher ; j>=larger_cipher ; j--)
+	for(j=N ; j>=0 ; j--)
 	{
 		multi[i][j] = num[i][j]*num[i+1][j];
 		if(multi[i][j]>=10)
 			 multi[i][j+1]+=multi[i][j]/10;
 	}
 //곱한것들 더하기계산
-	for(j=1000-count[j] ; j>=larger_cipher-strlen(num[i+1]) ; j--)
+	for(j=N ; j>=0 ; j--)
 		for(int k=0 ; k<strlen(num[i+1]) ; k++)
 		{
-			result[i][j] += multi[k][j];   //이부분 나중에 확인좀
-			if(result[i][j]>10) // 더했을때 10보다큰경우
+			num[i][j] += multi[k][j];   //이부분 나중에 확인좀
+			if(num[i][j]>10) // 더했을때 10보다큰경우
 			{
-				result[i][j]-=10;
-				result[i][j+1]+=1;
+				num[i][j]-=10;
+				num[i][j+1]+=1;
 			}
 		}
-//숫자를 다시 문자열들로
-	for(int j=i ; j<=j+1 ; j++)
-		for(k=N-count_smaller ; k>=larger_cipher-strlen(num[i+1]) ; k--) //최소 부터 최대까지
+
+//숫자들을 다시 문자로
+	for(int j=i ; j<=i+1 ; j++)
+		for(k=N ; k>=0 ; k--)
+		{
+			if(num[j][k]!=0)
 			num[j][k]+='0';               
+		}
 
 		return 0;
 }
+
 //SUBSTRACTION
 //
-void substraction (char num[][N], int i, char result[][1000])
+void substraction (char num[][N], int j, int how_num)
 {
-	//먼저 음수 에러처리부터 한다. 자릿수를 비교해서 빼는 수가 빼지는 수보다 커지면 에러.
-	int check[2][N] = {0};		//check 1, 2 는 59번째 배열부터 수를 확인하기 시작해서 59번째일때부터 변수를 하나씩 읽어나간다.
-	int diff = 0;
 
-	for (int k = 0; k < 2; k++, i++)		//check1, check2에 각각의 check 배열을 집어넣어준다.
+	//먼저 음수 에러처리부터 한다. 자릿수를 비교해서 빼는 수가 빼지는 수보다 커지면 에러.
+	int check[2] = {0};		//check 1, 2 는 59번째 배열부터 수를 확인하기 시작해서 59번째일때부터 변수를 하나씩 읽어나간다.
+	int diff = 0;
+	int w = 0;				// 두 변수의 자릿값이 같을 때 쓰는놈.
+
+	for (int k = 0; k < 2; k++, j++)		//check1, check2에 각각의 check 배열을 집어넣어준다.
 	{
 		for (int x = 1; x < N; x++)			//60번째 num배열부터 읽아들어가고 null문자이면 0을 심어주고 아니면 만약 정수부분이라면 check변수를 증가시켜 빼는 수들과 빼지는 수들의 자릿수를 비교한다.
 		{
-			if (num[i][59 - x] == 0)
+			if (num[j][59 - x] == 0)
 			{
-				if (check[k][x] > 0)
+				if (check[k] > 0)
 					break;
 				else
-					num[i][60 - check[k][x]] = '0';
+					num[j][59 - x] = '0';
 			}
 			else if (x > 9)					//49번째 배열부터 check 변수 증가.
-				check[k][x]++;
+				check[k] += 1;
 		}
 	}
+	//test
+	//
+	//
+/*	printf("계산 전 값을 출력합니다.\n");
+	for (int tst_i = 0; tst_i < 3; tst_i++)
+		for (int tst_j = 0; tst_j < N; tst_j++)
+			printf("num[%d][%d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
+*/
+	j--;			//j 다시 원래대로 초기화.
+//	printf("j = %d\n", j);
+//	printf("check[0] = %d\n", check[0]);
+//	printf("check[1] = %d\n", check[1]);
 
 	if (check[0] < check[1])				//오류(음수가 나오는 경우 에러처리)
-		printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
+		printf("\n############################ F A T A L  E R R O R #######################\n음.. 두 변수의 자리값을 비교해봤는데 빼는 놈이 더 커서 오류처리함.\n");
 	else if (check[0] == check[1])
 	{
-		for (int k = 0; k < check[0][k]; k++)
+		for (int k = 0; k < check[0] && w == 0; k++)
 		{
-			if (num[i][50 - check[0][k] + k] > num[i + 1][50 - check[0][k] + k])		//두 변수의 자릿값이 같다면 다시 59번째로 돌아가면서 비교한다. 하나라도 빼지는 수가 크다면 오류가 아니다.
-				break;
-			else if (num[i][50 - check[0][k] + k] < num[i + 1][50 - check[0][k] + k])
+			printf("num[%d][%d] = %c\n", j - 1, 50 - check[0] + k, num[j - 1][50 - check[0] + k]);
+			printf("num[%d][%d] = %c\n", j, 50 - check[0] + k, num[j][50 - check[0] + k]);
+			if (num[j - 1][50 - check[0] + k] > num[j][50 - check[0] + k])		//두 변수의 자릿값이 같다면 다시 59번째로 돌아가면서 비교한다. 하나라도 빼지는 수가 크다면 오류가 아니다.
+				w = 1;
+			else if (num[j - 1][50 - check[0] + k] < num[j][50 - check[0] + k])
 				printf("\n############################ F A T A L  E R R O R #######################\nOccur cause is the ability that can't design into our program.\n");
 		}
 	}
 	
-	for (int x = 1; x < N; x++)				//이제는 드디어 뺄셈 부분 들어간다! 어차피 전부 char형이니 뺀 결과가 48('0') 보다 작으면 10 더하고 다음 배열에 1을 빼주는 방식으로 가자.
+	for (int x = 1; check[1] > 0 && x < N; x++)				//이제는 드디어 뺄셈 부분 들어간다! 어차피 전부 char형이니 뺀 결과가 48('0') 보다 작으면 10 더하고 다음 배열에 1을 빼주는 방식으로 가자.
 	{
-		result[i][59 - x] = num[i][59 - x] - num[i + 1][59 - x];
-		if (result[i][59 - x] < 48)
+		num[0][59 - x] -= num[1][59 - x] - '0';
+		if (num[0][59 - x] < '0')
 		{
-			result[i][59 - x] += 10;
-			num[i][58 - x]--;
+			num[0][59 - x] += 10;
+			num[0][58 - x] -= 1;
 		}
+		if (x > 9)
+			check[1] -= 1;
 	}
-
+	//test
+	//
+	//
+/*	printf("계산 후 값을 출력합니다.\n");
+	for (int tst_i = 0; tst_i < 3; tst_i++)
+		for (int tst_j = 0; tst_j < N; tst_j++)
+			printf("num[%2d][%2d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
+*/
 	return;
+}
+void divide_function(char num[][N] ,int i) {
+	
+//두 문자열들을 숫자로 변환   (자리수가 작은쪽 까지 만큼만)
+
+	for(int j=i ; j<=i+1 ; j++)
+		for(int k=N ; k>=0 ; k--)
+		{
+			if(num[j][k]!=0)
+			num[j][k]-='0';               
+		}
+	
+//계산
+	
+
+
+//숫자들을 다시 문자로
+	for(int j=i ; j<=i+1 ; j++)
+		for(int k=N ; k>=0 ; k--)
+		{
+			if(num[j][k]!=0)
+			num[j][k]+='0';               
+		}
+
+	return ;
 }
