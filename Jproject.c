@@ -186,7 +186,7 @@ int main () {
 
 		printf("명령어 출력\n");
 		for (int i = 0; i < 10; i++)
-			printf("%d : %c\n", i, order[i]);*/
+			printf("%d : %c\n", i, order[i]);
 
 		printf("변수 저장값 출력\n");
 		for (int i = 0; i < N; i++)
@@ -202,7 +202,7 @@ int main () {
 
 		printf("변수 이름 출력\n");
 		for (int i = 0; i < 10; i++)
-			printf("%d : %c\n", i, vname[i]);
+			printf("%d : %c\n", i, vname[i]);*/
 
 		//printf("var_flag = %d", var_flag);
 	}
@@ -269,7 +269,7 @@ int cipher_save_num_decimal_places(int c, char num[][N],int i, int var_flag) { /
 			vk++;
 			vj=N-10;
 		}
-		num[i][j++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
+		num[i][vj++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
 		return 0;
 	}
 	else
@@ -406,7 +406,7 @@ int order_check(char order[],char vname[],char vnum[][N],int var_flag) {
 		fclose(file); //file이 가리키는 포인터 파일 닫기
 	}
 	else
-		printf("= error : 잘못된문자\n");
+		//printf("= error : 잘못된문자\n");
 	return 0;
 }
 
