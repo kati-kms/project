@@ -24,7 +24,7 @@ int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번
 //  int _var()
 //  int _error()
  	int _order(char order[],int c,int o);
-	int order_check(char order[],char vname[],char vnum[][N],int var_flag);
+	int order_check(char order[],char vname[],char vnum[][N]);///////////////////////////////////////////
 
 
 
@@ -49,6 +49,7 @@ int main () {
 	int space_flag=0; // space바 확인
 	int var_flag = 0; // 변수 확인
 	int error = 0; //error확인
+	int input_flag = 0; //변수입출력 확인
 	
 	for(int i=0 ; i<10 ; i++)
 		for(int j=0 ; j<N ; j++)
@@ -64,8 +65,7 @@ int main () {
 	printf("최강플젝 강승호 \n");
 	printf("민석, 한다, 커밋 \n");
 
-	for (int z = 0; z < 10; z++) {
-
+	while(1){
 		printf("(Input) : ");
 
 		while ((c = getchar()) != '\n')//엔터키 전까지 다 넣기
@@ -103,7 +103,8 @@ int main () {
 					}
 					if (c == '=')
 					{
-						var_flag++;
+						var_flag=1;
+						input_flag=1;
 					}
 					else
 						error = 1;
@@ -133,13 +134,11 @@ int main () {
 			}
 		} //while (\n) 끝
 
-	//	printf("%d\n",var_flag);
+		//printf("%d\n",var_flag);
 		if (var_flag == 1)
 		{
 			cipher_save_num_integers(vnum, stack, count, v); //vnum에 숫자입력받음
 			vname[v] = order[0]; // 변수이름 따로 저장
-
-			var_flag = 0; // 다시 변수를 받기 위해 초기화
 			if (v < 10) //입력받은 변수가 10개 미만
 				v++;
 			else
@@ -149,22 +148,24 @@ int main () {
 			cipher_save_num_integers(num, stack, count, i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 
 
-		if (order[0] != 0) //문자를 입력받았으면
+		if (order[0] != 0&&input_flag==0) //문자를 입력받고, 변수를 입력받지않았다면
 		{
-			order_check(order, vname, vnum, var_flag);
+			order_check(order, vname, vnum); //order의 배열값을 확인해 명령어확인
 		}
+		input_flag = 0; //변수입력유무 다시체크하기 위해 초기화
 
 		//	for (int z = 0; z < 6; z++)
 		//		printf("order[%d] = %c\n", z, order[z]);
 
-			///////////////////////////////////////////////////////////////////////////////////////////////////
+
 		for (int i = 0; i < 6; i++) //명령어 재입력 위해 초기화
 			order[i] = 0;
 
 		o = 1;               //명령어 재입력 위해 초기화
 		_order(order, c, o);
 		o = 0;
-		///////////////////////////////////////////////////////////////////////////////////////////////////
+		var_flag = 0; // 다시 변수를 받기 위해 초기화
+
 
 		  //if(error==1)
 		  //	printf("(error)\n");
@@ -302,31 +303,32 @@ int _order(char order[], int c, int o) {
 	order[k++]=c;
 }
 
-int order_check(char order[],char vname[],char vnum[][N],int var_flag) {
+int order_check(char order[],char vname[],char vnum[][N]) {
 	int ch;
 	if(order[0] =='e' && order[1]=='n' && order[2]=='d' && order[3]==0)  //end 입력받으면
 	{
 		printf("프로그램을 종료합니다.\n");
-		system("exit");
+		exit(0); //프로그램종료
 	}
 	else if(order[0]=='c' && order[1]=='l' && order[2]=='e' && order[3]=='a' && order[4]=='r' && order[5]==0) //clear 입력받으면
 	{
 		system("clear");
 	}
-	else if(var_flag)  //변수를 입력받으면
+	else if(order[1]==0)  //변수를 입력받으면
 	{
 		int i=0;
 		int a = 0;
-		printf("= ");
-		for(i;i<10;i++)
+
+		for (i; i < 10; i++)
 		{
-			if(vname[i]!=order[0])
+			if (vname[i] != order[0])
 				continue;
-			if(vname[i]==order[0])
+			if (vname[i] == order[0])
 			{
-				for(int j=0;j<N;j++)
+				printf("= ");
+				for (int j = 0; j < N; j++)
 				{
-					printf("%c",vnum[i][j]);
+					printf("%c", vnum[i][j]);
 				}
 				a = 1;
 				break;
@@ -371,12 +373,14 @@ int order_check(char order[],char vname[],char vnum[][N],int var_flag) {
 			printf("저장된 변수가 없습니다.\n");
 		else
 		{
-			while (ch = getc(file) != EOF)
+			while (ch != EOF)
 			{
+				ch = getc(file);
 				if (ch == '\n') //파일입력이 계행일 경우 j를증가
 				{
 					j++;
 					k = 0; //변수를 다시저장하기 위해 초기화
+					continue;
 				}
 
 				if (ch >= 'a'&&ch <= 'z' || ch >= 'A'&&ch <= 'Z') //파일입력이 문자일 경우 입력문자배열에 저장
@@ -406,7 +410,7 @@ int order_check(char order[],char vname[],char vnum[][N],int var_flag) {
 		fclose(file); //file이 가리키는 포인터 파일 닫기
 	}
 	else
-		//printf("= error : 잘못된문자\n");
+		printf("= error : 잘못된문자\n");
 	return 0;
 }
 
