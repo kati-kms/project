@@ -31,7 +31,7 @@ int add_function (int i, char num[][N], char result[][1000]); // int i는 몇번
 int main () {
 	int c;
 	int i=0;
-	int v=0;
+	int v=0; //변수 
 	int o=0;
 	int k=0;
 //	int j;
@@ -64,129 +64,148 @@ int main () {
 	printf("최강플젝 강승호 \n");
 	printf("민석, 한다, 커밋 \n");
 
-for(int z=0;z<2;z++){
+	for (int z = 0; z < 10; z++) {
 
-	printf("(Input) : ");
+		printf("(Input) : ");
 
-	while((c=getchar())!='\n')//엔터키 전까지 다 넣기
-	{
-		if(c!=' ')//숫자,연산자  경계   마다 끊기 (숫자 / 연산자 )
+		while ((c = getchar()) != '\n')//엔터키 전까지 다 넣기
 		{
-			if(( c>='a' && c<='z') || (c>='A' && c<='Z'))
-				_order(order,c,o);
-			else 
+			if (c != ' ')//숫자,연산자  경계   마다 끊기 (숫자 / 연산자 )
 			{
-				if(c=='1'||c=='2'||c=='3'||c=='4'||c=='5'||c=='6'||c=='7'||c=='8'||c=='9'||c=='0') // 숫자일경우
+				if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))  //문자일경우
+					_order(order, c, o);
+				else
 				{
-					if(point_flag) //소수점이 존재했다면 이쪽으로 들어와서   소수첫째자리부터 시작
+					if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0') // 숫자일경우
 					{
-						if(var_flag==1)
-							cipher_save_num_decimal_places(c,vnum,v,var_flag);   // 변수의 소수부분
+						if (point_flag) //소수점이 존재했다면 이쪽으로 들어와서   소수첫째자리부터 시작
+						{
+							if (var_flag == 1)
+								cipher_save_num_decimal_places(c, vnum, v, var_flag);   // 변수의 소수부분
+							else
+								cipher_save_num_decimal_places(c, num, i, var_flag);   // 소수부분
+						}
 						else
-							cipher_save_num_decimal_places(c,num,i,var_flag);   // 소수부분
+							if (var_flag == 1)
+								count = cipher_save_stack_integers(c, stack, v, var_flag);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
+							else
+								count = cipher_save_stack_integers(c, stack, i, var_flag);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
+					}
+					//			else  //나중에 변수 선언들어오면 그것도 처리해야됨 if else를  나머지는 error뜨는함수로할수있게
+					if (c == '.')
+					{
+						point_flag++;
+						//	continue;
+					}
+					if (c == '+' || c == '-' || c == '*' || c == '/' || c == '%') // 연산자일 경우
+					{
+						cipher_save_op(c, op);  // op의 i번째 원소만 전달하고 싶었지만 실패 다 전달
+					}
+					if (c == '=')
+					{
+						var_flag++;
 					}
 					else
-						if(var_flag==1)
-							count=cipher_save_stack_integers(c,stack,v,var_flag);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
-						else
-							count=cipher_save_stack_integers(c,stack,i,var_flag);// 우선은stack에넣고 count를 리턴하여 stop_count에 넣음 // 검토사항 count변수 나눌까??
-				}
-//			else  //나중에 변수 선언들어오면 그것도 처리해야됨 if else를  나머지는 error뜨는함수로할수있게
-				if(c=='.')
-				{
-					point_flag++;
-				//	continue;
-				}
-				if(c=='+'||c=='-'||c=='*'||c=='/'||c=='%') // 연산자일 경우
-				{
-					cipher_save_op(c,op);  // op의 i번째 원소만 전달하고 싶었지만 실패 다 전달
-				}
-				if(c=='=')
-				{
-					var_flag++;
-				}
-				else
-					error=1;
-			}//else에 그외   변수/여러명령어들/ 등  이랑  그것마저도 else이면 error처리;
-		}
-		else //c==' '
-		{
-			printf("%d\n",count);
-			cipher_count[i]=count+1; // 자릿수 저장
-			if(space_flag==0)
-			{
-				if(var_flag==1)
-					cipher_save_num_integers(vnum,stack,count,v); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
-				else
-					cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+						error = 1;
+				}//else에 그외   변수/여러명령어들/ 등  이랑  그것마저도 else이면 error처리;
 			}
+			else //c==' '
+			{
+				printf("%d\n", count);
+				cipher_count[i] = count + 1; // 자릿수 저장
+				if (space_flag == 0)
+				{
+					if (var_flag == 1)
+						cipher_save_num_integers(vnum, stack, count, v); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+					else
+						cipher_save_num_integers(num, stack, count, i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
+				}
 				space_flag++;
-			if(space_flag==2) // 숫자도 입력됬고 연산자도 입력됬을테니까 num의 i를 1높여야함
-			{
-				++i;
-				if(var_flag==1)
-					--i;
-				space_flag=0;// 다시 0으로
+				if (space_flag == 2) // 숫자도 입력됬고 연산자도 입력됬을테니까 num의 i를 1높여야함
+				{
+					++i;
+					if (var_flag == 1)
+						--i;
+					space_flag = 0;// 다시 0으로
+				}
+				point_flag = 0; // 소수점초기화
+				count = 0; // 자릿수 초기화
 			}
-			point_flag=0; // 소수점초기화
-			count=0; // 자릿수 초기화
+		} //while (\n) 끝
+
+	//	printf("%d\n",var_flag);
+		if (var_flag == 1)
+		{
+			cipher_save_num_integers(vnum, stack, count, v); //vnum에 숫자입력받음
+			vname[v] = order[0]; // 변수이름 따로 저장
+
+			var_flag = 0; // 다시 변수를 받기 위해 초기화
+			if (v < 10) //입력받은 변수가 10개 미만
+				v++;
+			else
+				printf("변수는 10개까지 받을 수 있습니다.\n");
 		}
-	} //while (\n) 끝
+		else
+			cipher_save_num_integers(num, stack, count, i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
 
-	if(order[0] != 0)
-	{
-		order_check(order,vname,vnum,var_flag);
+
+		if (order[0] != 0) //문자를 입력받았으면
+		{
+			order_check(order, vname, vnum, var_flag);
+		}
+
+		//	for (int z = 0; z < 6; z++)
+		//		printf("order[%d] = %c\n", z, order[z]);
+
+			///////////////////////////////////////////////////////////////////////////////////////////////////
+		for (int i = 0; i < 6; i++) //명령어 재입력 위해 초기화
+			order[i] = 0;
+
+		o = 1;               //명령어 재입력 위해 초기화
+		_order(order, c, o);
+		o = 0;
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+
+		  //if(error==1)
+		  //	printf("(error)\n");
+	  //for end
+
+	//	priority(num,op,i);
+
+	/*	for (int j = 0; j < N; j++)
+			printf("stack %d : %c\n", j, stack[j]);
+
+		for (int i = 0; i < N; i++)
+			printf("num1 %d : %c\n", i, num[0][i]);
+
+		for (int i = 0; i < N; i++)
+			printf("num2 %d : %c\n", i, num[1][i]);
+
+		for (int i = 0; i < 10; i++)
+			printf("op %d : %c\n", i, op[i]);
+
+		printf("명령어 출력\n");
+		for (int i = 0; i < 10; i++)
+			printf("%d : %c\n", i, order[i]);
+
+		printf("변수 저장값 출력\n");
+		for (int i = 0; i < N; i++)
+			printf("%d : %c\n", i, vnum[0][i]);
+
+		printf("변수 저장값 출력\n");
+		for (int i = 0; i < N; i++)
+			printf("%d : %c\n", i, vnum[1][i]);
+
+		printf("변수 저장값 출력\n");
+		for (int i = 0; i < N; i++)
+			printf("%d : %c\n", i, vnum[2][i]);
+
+		printf("변수 이름 출력\n");
+		for (int i = 0; i < 10; i++)
+			printf("%d : %c\n", i, vname[i]);*/
+
+		//printf("var_flag = %d", var_flag);
 	}
-//	printf("%d\n",var_flag);
-	if(var_flag==1)
-	{
-		cipher_save_num_integers(vnum,stack,count,v); //vnum에 숫자입력받음
-		vname[v]=order[0]; // 변수이름 따로 저장
-		for(int i=0;i<6;i++)
-			order[i]=0;
-
-		var_flag=0; // 다시 변수를 받기 위해 초기화
-		v++;
-	}
-	else	
-		cipher_save_num_integers(num,stack,count,i); //stack부분  정수부분  넣기 //숫자의 경우 소수점이 없는애들이 끝나는시점이니까 stack을 num에 넣어야하나요?
-
-	//if(error==1)
-	//	printf("(error)\n");
-}
-	
-//	priority(num,op,i);
-
-	for(int j=0 ; j<N ; j++)
-		printf("stack %d : %c\n",j,stack[j]);
-
-	for(int i=0 ; i<N ; i++)
-		printf("num1 %d : %c\n",i,num[0][i]);
-
-	for(int i=0 ; i<N ; i++)
-		printf("num2 %d : %c\n",i,num[1][i]);
-
-	for(int i=0 ; i<10 ; i++)
-		printf("op %d : %c\n",i,op[i]);
-
-	printf("명령어 출력\n");
-	for(int i=0; i<10 ; i++)
-		printf("%d : %c\n",i,order[i]);
-
-	printf("변수 저장값 출력\n");
-	for(int i=0 ; i<N ; i++)
-		printf("%d : %c\n",i,vnum[0][i]);
-
-	printf("변수 저장값 출력\n");
-	for(int i=0 ; i<N ; i++)
-		printf("%d : %c\n",i,vnum[1][i]);
-
-	printf("변수 이름 출력\n");
-	for(int i=0 ; i<10 ; i++)
-		printf("%d : %c\n",i,vname[i]);
-
-		printf("var_flag = %d",var_flag);
-
 	return 0;
 }
 
@@ -250,7 +269,7 @@ int cipher_save_num_decimal_places(int c, char num[][N],int i, int var_flag) { /
 			vk++;
 			vj=N-10;
 		}
-		num[i][j++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
+		num[i][vj++]=c; // 이거가능? 첫번째 꺼 비우면 위에서입력받는 num[i][j]로 인식이 되나?????????????
 		return 0;
 	}
 	else
@@ -273,14 +292,21 @@ int cipher_save_op(int c,char op[]) { // 연산자를 저장한다.
 
 int _order(char order[], int c, int o) {
 	static int k=0;
-	if(o)
-		k=0;
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	if (o==1) //o가 1이면 다시 받기위해 k값을초기화
+	{
+		k = 0;
+		return o;
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////
 	order[k++]=c;
 }
 
-int order_check(char order[],char name[],char num[][N],int var_flag) {
+int order_check(char order[],char vname[],char vnum[][N],int var_flag) {
+	int ch;
 	if(order[0] =='e' && order[1]=='n' && order[2]=='d' && order[3]==0)  //end 입력받으면
 	{
+		printf("프로그램을 종료합니다.\n");
 		system("exit");
 	}
 	else if(order[0]=='c' && order[1]=='l' && order[2]=='e' && order[3]=='a' && order[4]=='r' && order[5]==0) //clear 입력받으면
@@ -290,45 +316,98 @@ int order_check(char order[],char name[],char num[][N],int var_flag) {
 	else if(var_flag)  //변수를 입력받으면
 	{
 		int i=0;
+		int a = 0;
 		printf("= ");
 		for(i;i<10;i++)
 		{
-			if(name[i]!=order[0])
+			if(vname[i]!=order[0])
 				continue;
-			if(name[i]==order[0])
+			if(vname[i]==order[0])
 			{
 				for(int j=0;j<N;j++)
 				{
-					printf("%c",num[i][j]);
+					printf("%c",vnum[i][j]);
 				}
+				a = 1;
 				break;
 			}
-			if(i==10) //저장된 변수에 입력된변수의 이름이 없으면 undifined 출력
-				printf("undifined");
+		}
+		if (a = 0) //저장된변수에 입력된변수의 이름이없으면
+		{
+			printf("undifined"); //오류메세지 출력
 		}
 		printf("\n");
-		return 0;
 	}
 	else if(order[0]=='V'&&order[1]=='A'&&order[2]=='R'&&order[3]==0) //VAR입력 받으면
 	{
-		if(name[0]==0&&name[1]==0&&name[2]==0&&name[3]==0&&name[4]==0&&name[5]==0&&name[6]==0&&name[7]==0&&name[8]==0&&name[9]==0)
+		if(vname[0]==0&&vname[1]==0&&vname[2]==0&&vname[3]==0&&vname[4]==0&&vname[5]==0&&vname[6]==0&&vname[7]==0&&vname[8]==0&&vname[9]==0)
 		{
 			printf("정의된 변수 없음\n");
+
 		}
 		else
 			for(int i=0;i<10;i++)
 			{
-				printf("%c = ",name[i]);  //변수 = 숫자 출력
-				for(int j=0;j<N;j++)
-					printf("%c",num[i][j]);
-				printf("\n");
+				if (vname[i] != 0) //변수 존재하지 않으면 출력하지 않음
+				{
+					printf("%c = ", vname[i]);  //변수 = 숫자 출력
+					for (int j = 0; j < N; j++)
+					{
+						if (j == 50)
+						{
+							printf(".");
+						}
+							printf("%c", vnum[i][j]);
+					}
+					printf("\n");
+				}
 			}
 	}
-	//else if(order[0]=='l'&&order[1]=='o'&&order[2]=='a'&&order[3]=='d'&&order[4]=0)  //load입력 받으면
-	//{
-	//	FILE *file=fopen("file.txt","rt"); //file.txt를 현재 디렉토리에서 텍스트전용 읽기 모드로 연다
+	else if(order[0]=='l'&&order[1]=='o'&&order[2]=='a'&&order[3]=='d'&&order[4]==0)  //load입력 받으면
+	{
+		int i = 0, j = 0, k = 0;
+		FILE *file=fopen("file.txt","rt"); //file.txt를 현재 디렉토리에서 텍스트전용 읽기 모드로 연다
+		if (file == NULL)
+			printf("저장된 변수가 없습니다.\n");
+		else
+		{
+			while (ch = getc(file) != EOF)
+			{
+				if (ch == '\n') //파일입력이 계행일 경우 j를증가
+				{
+					j++;
+					k = 0; //변수를 다시저장하기 위해 초기화
+				}
 
-//	}
+				if (ch >= 'a'&&ch <= 'z' || ch >= 'A'&&ch <= 'Z') //파일입력이 문자일 경우 입력문자배열에 저장
+					vname[i++] = ch;
+				else
+					vnum[j][k++] = ch; //숫자를 변수배열에 저장
+			}
+		}
+		
+		fclose(file);
+	}
+	else if (order[0] == 's'&&order[1] == 'a'&&order[2] == 'v'&&order[3] == 'e'&&order[4] == 0) //save 입력 받으면
+	{
+		FILE *file = fopen("file.txt", "wt"); //file.txt를 쓰기모드로 열기(없으면 새로생성)
+		for (int i = 0; i < N; i++)
+		{
+			if (vname[i] != 0)  //현재 입력받은변수가 있다면
+			{
+				putc(vname[i], file); //변수이름 파일에저장
+				for (int j = 0; j < N; j++)  //숫자를 파일에저장
+				{
+					putc(vnum[i][j], file);
+				}
+				putc('\n', file);  //변수를 모두 저장하면 줄바꿈(계행 저장)
+			}
+		}
+		fclose(file); //file이 가리키는 포인터 파일 닫기
+	}
+	else
+		//printf("= error : 잘못된문자\n");
+	return 0;
 }
 
 //	연산자 우선순위
