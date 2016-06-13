@@ -420,12 +420,12 @@ void priority (char num[10][N], char op[], int i)
 	//test
 	//
 	//
-	printf("priority 들어오자마자 출력한 배열값들\n");
+/*	printf("priority 들어오자마자 출력한 배열값들\n");
 	for (int tst_i = 0; tst_i < 3; tst_i++)
 		for (int tst_j = 0; tst_j < N; tst_j++)
 			printf("num[%d][%d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
 	printf("\n");
-
+*/
 	int how_num = i + 1;
 	int higher_priority = 0;//높은 우선순위(*,/,%)가 하나라도 있으면 이 값은 1이 되어 그것부터 계산할 수 있도록 만든다.
 //	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
@@ -452,10 +452,10 @@ void priority (char num[10][N], char op[], int i)
 				printf("\n############################ F A T A L  E R R O R #######################\n원인은 바로 연산자와는 별개인 놈을 집어넣었기 때문입니다.\n");
 				break;
 		}
-		printf("op[%d] = %c\n", j, op[j]);
-		printf("higher priority = %d\n", higher_priority);
+	//	printf("op[%d] = %c\n", j, op[j]);
+	//	printf("higher priority = %d\n", higher_priority);
 	}
-		printf("how_num = %d\n", how_num);
+	//	printf("how_num = %d\n", how_num);
 
 	for (int j = 0; j < how_num - 1 ; j++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
@@ -464,8 +464,8 @@ void priority (char num[10][N], char op[], int i)
 			switch (op[j])
 			{
 				case '*':
-					printf("asterisk\n");
-					//multiply(num[j], num[j + 1]);	
+				//	printf("asterisk\n");
+					multiply_function(i,num);	
 					higher_priority--;
 					how_num--;
 					break;
@@ -490,11 +490,11 @@ void priority (char num[10][N], char op[], int i)
 			switch (op[j])
 			{
 				case '+':
-					printf("plus\n");
+//					printf("plus\n");
 					add_function (j, num); 
 					break;
 				case '-':
-					printf("minus\n");
+//					printf("minus\n");
 					substraction (num, j, how_num);
 					break;
 				default:
@@ -507,7 +507,7 @@ void priority (char num[10][N], char op[], int i)
 			for (int i = 0; i < N; i++)
 			{
 				num[k][i] = num[k + 1][i];
-				printf("숫자당기기 체크 num[%d][%d] = %c\n", k - 1, i, num[k - 1][i]);
+//				printf("숫자당기기 체크 num[%d][%d] = %c\n", k - 1, i, num[k - 1][i]);
 			}
 		}
 	}
