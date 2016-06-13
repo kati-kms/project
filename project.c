@@ -407,7 +407,7 @@ int order_check(char order[], char vname[], char vnum[][N], int var_flag) {
 		fclose(file); //file이 가리키는 포인터 파일 닫기
 	}
 	else
-		printf("= error : 잘못된문자\n");
+//		printf("= error : 잘못된문자\n");
 	return 0;
 }
 
