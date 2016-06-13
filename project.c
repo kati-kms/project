@@ -156,7 +156,7 @@ int main () {
 	if(error==1)
 		printf("(error)\n");
 //}
-//	priority(num,op,i);
+	priority(num,op,i);
 
 	for(int j=0 ; j<N ; j++)
 		printf("stack %d : %c\n",j,stack[j]);
@@ -359,7 +359,7 @@ void priority (char num[][N], char op[], int i)
 			case '-':
 				break;
 			default:
-				printf("\n############################ F A T A L  E R R O R #######################\n");
+				printf("\n############################ F A T A L  E R R O R #######################\n원인은 바로 연산자와는 별개인 놈을 집어넣었기 때문입니다.\n");
 				break;
 		}
 		printf("op[%d] = %c\n", i, op[i]);
@@ -406,16 +406,16 @@ void priority (char num[][N], char op[], int i)
 			{
 				case '+':
 					printf("plus\n");
-					//addition(num[i], num[i + 1]);
+					add_function (i, num, result); 
 					is_first_cal = 1;
 					break;
 				case '-':
 					printf("minus\n");
-					//substraction(num[i], num[i + 1]);
+					substraction (num, i);
 					is_first_cal = 1;
 					break;
 				default:
-					printf("\n############################ F A T A L  E R R O R #######################\n");
+					printf("\n############################ F A T A L  E R R O R #######################\n이 문제의 ");
 			}
 		}
 		if (is_first_cal == 1) // 이미 한번 연산이 수행됌
@@ -441,7 +441,7 @@ void priority (char num[][N], char op[], int i)
 
 	printf("\n");
 
-	for (; how_num > 1; how_num--)						//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
+/*	for (; how_num > 1; how_num--)						//두번째 계산 : is_first_cal == 1 이제부터는 남은 숫자 수가 1이 될때까지 반복.
 	{
 		while (higher_priority >= 1)
 		{
@@ -519,7 +519,7 @@ void priority (char num[][N], char op[], int i)
 }
 
 
-/*
+
 		for (int i = 1; i < how_num - 1; i++)		//두번째 계산부터는 num이 아니라 result로 계산.
 		{
 			switch (op[i])
