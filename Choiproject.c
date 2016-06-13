@@ -342,7 +342,7 @@ void priority (char num[10][N], char op[], int i)
 
 	int how_num = i + 1;
 	int higher_priority = 0;//높은 우선순위(*,/,%)가 하나라도 있으면 이 값은 1이 되어 그것부터 계산할 수 있도록 만든다.
-	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
+//	int is_first_cal = 0;	//처음 계산할 때 num과 num을 계산해야 하는데, 문제는 처음 계산 후부터는 모든 배열이 result로 옮겨지기 때문에 이 변수를 활용했다.
 
 
 	for (int j = 0; j < how_num - 1 ; j++)		//op에 저장된 연산자들을 먼저 훑어본다. 높은 우선순위 연산자가 보인다면 higher_priority 변수의 값을 1 증가시킨다.
@@ -371,7 +371,7 @@ void priority (char num[10][N], char op[], int i)
 	}
 		printf("how_num = %d\n", how_num);
 
-	for (int j = 0; j < how_num && is_first_cal == 0; j++)	//계산을 아직 한번도 수행하지 않았을 때
+	for (int j = 0; j < how_num - 1 ; j++)	//계산을 아직 한번도 수행하지 않았을 때
 	{
 		if(higher_priority >= 1)					//높은 우선순위가 존재하는가?
 		{
@@ -380,21 +380,18 @@ void priority (char num[10][N], char op[], int i)
 				case '*':
 					printf("asterisk\n");
 					//multiply(num[j], num[j + 1]);	
-					is_first_cal = 1;
 					higher_priority--;
 					how_num--;
 					break;
 				case '/':
 					printf("slash\n");
 					//divide(num[j], num[j + 1]);
-					is_first_cal = 1;
 					higher_priority--;
 					how_num--;
 					break;
 				case '%':
 					printf("percent\n");
 					//mode(num[j], num[j + 1]);
-					is_first_cal = 1;
 					higher_priority--;
 					how_num--;
 					break;
@@ -409,28 +406,34 @@ void priority (char num[10][N], char op[], int i)
 				case '+':
 					printf("plus\n");
 					add_function (j, num); 
-					is_first_cal = 1;
 					break;
 				case '-':
 					printf("minus\n");
 					substraction (num, j, how_num);
-					is_first_cal = 1;
 					break;
 				default:
-					printf("\n############################ F A T A L  E R R O R #######################\n이 문제의 ");
+					printf("\n############################ F A T A L  E R R O R #######################\n이 문제의 원인은 처음 두놈 계산할 때 엉뚱한 연산자가 나와서이다.\n");
 			}
 		}
-		if (is_first_cal == 1) // 이미 한번 연산이 수행됌
+		//숫자 당겨주기
+		for (int k = 1; k < how_num; k++)
 		{
-			for (int l = j + 1; l < how_num; l++)		//첫번째 계산시킨 뒤에는 전부다 result로 옮겨주고 자리까지 땡겨주어야 합니다. 아! op도 땅겨버려요~!
+			for (int i = 0; i < N; i++)
 			{
-				for (int k = N; k > 0; k--)
-					num[l][k] = num[l + 1][k];
-				op[l - 1] = op[l];
+				num[k][i] = num[k + 1][i];
+				printf("숫자당기기 체크 num[%d][%d] = %c\n", k - 1, i, num[k - 1][i]);
 			}
-			how_num -= 1;									//당근 how_num을 1 감소시켜주어야 하는것 아니겠나요
 		}
 	}
+
+	//test
+	//
+	//
+	//
+	printf("priority 함수 결점 체크 for문.\n");
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < N; j++)
+			printf("num[%2d][%2d] = %c\n", i, j, num[i][j]);
 
 }
 
@@ -475,12 +478,6 @@ void priority (char num[10][N], char op[], int i)
 				if (j == 1)				//숫자들 당기기
 				{
 					how_num--;
-					for (int k = i + 1; k < how_num + 1; k++)
-					{
-						for (int i = 0; i < 1000; i++)
-							result[k][i] = result[k + 1][i];
-						op[k - 1] = op[k];
-					}
 				}
 			}
 		}	
@@ -672,18 +669,8 @@ void substraction (char num[][N], int j, int how_num)
 				check[k] += 1;
 		}
 	}
-	//test
-	//
-	//
-	printf("계산 전 값을 출력합니다.\n");
-	for (int tst_i = 0; tst_i < 3; tst_i++)
-		for (int tst_j = 0; tst_j < N; tst_j++)
-			printf("num[%d][%d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
 
 	j--;			//j 다시 원래대로 초기화.
-	printf("j = %d\n", j);
-	printf("check[0] = %d\n", check[0]);
-	printf("check[1] = %d\n", check[1]);
 
 	if (check[0] < check[1])				//오류(음수가 나오는 경우 에러처리)
 		printf("\n############################ F A T A L  E R R O R #######################\n음.. 두 변수의 자리값을 비교해봤는데 빼는 놈이 더 커서 오류처리함.\n");
@@ -691,8 +678,6 @@ void substraction (char num[][N], int j, int how_num)
 	{
 		for (int k = 0; k < check[0] && w == 0; k++)
 		{
-			printf("num[%d][%d] = %c\n", j - 1, 50 - check[0] + k, num[j - 1][50 - check[0] + k]);
-			printf("num[%d][%d] = %c\n", j, 50 - check[0] + k, num[j][50 - check[0] + k]);
 			if (num[j - 1][50 - check[0] + k] > num[j][50 - check[0] + k])		//두 변수의 자릿값이 같다면 다시 59번째로 돌아가면서 비교한다. 하나라도 빼지는 수가 크다면 오류가 아니다.
 				w = 1;
 			else if (num[j - 1][50 - check[0] + k] < num[j][50 - check[0] + k])
@@ -702,21 +687,14 @@ void substraction (char num[][N], int j, int how_num)
 	
 	for (int x = 1; check[1] > 0 && x < N; x++)				//이제는 드디어 뺄셈 부분 들어간다! 어차피 전부 char형이니 뺀 결과가 48('0') 보다 작으면 10 더하고 다음 배열에 1을 빼주는 방식으로 가자.
 	{
-		num[j - 1][59 - x] -= num[j][59 - x] - '0';
-		if (num[j - 1][59 - x] < '0')
+		num[0][59 - x] -= num[1][59 - x] - '0';
+		if (num[0][59 - x] < '0')
 		{
-			num[j - 1][59 - x] += 10;
-			num[j - 1][58 - x] -= 1;
+			num[0][59 - x] += 10;
+			num[0][58 - x] -= 1;
 		}
 		if (x > 9)
 			check[1] -= 1;
 	}
-	//test
-	//
-	//
-	printf("계산 후 값을 출력합니다.\n");
-	for (int tst_i = 0; tst_i < 3; tst_i++)
-		for (int tst_j = 0; tst_j < N; tst_j++)
-			printf("num[%2d][%2d] = %c\n", tst_i, tst_j, num[tst_i][tst_j]);
 	return;
 }
